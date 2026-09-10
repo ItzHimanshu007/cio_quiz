@@ -93,12 +93,24 @@ export default function AdminDashboard({ section = 'dashboard', adminName }: { s
         </nav>
 
         <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-[#D97706]/20 bg-[#2A100A] p-3">
-          <div className="flex items-center gap-2.5">
-            <CircleUserRound className="size-5 text-[#F59E0B]" />
-            <div className="min-w-0">
-              <p className="truncate text-xs font-bold text-white">{adminName || 'Admin'}</p>
-              <p className="text-[10px] text-[#F59E0B]">Conclave Administrator</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <CircleUserRound className="size-5 text-[#F59E0B] shrink-0" />
+              <div className="min-w-0">
+                <p className="truncate text-xs font-bold text-white">{adminName || 'Admin'}</p>
+                <p className="text-[10px] text-[#F59E0B]">Administrator</p>
+              </div>
             </div>
+            <button
+              onClick={async () => {
+                await fetch('/api/admin/logout', { method: 'POST' });
+                window.location.href = '/admin/login';
+              }}
+              title="Sign Out"
+              className="rounded-lg border border-[#BE123C]/40 bg-[#BE123C]/20 px-2 py-1 text-[10px] font-bold text-[#FCA5A5] hover:bg-[#BE123C]/40 transition"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </aside>

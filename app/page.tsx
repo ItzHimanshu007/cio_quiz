@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowRight, Calendar, CheckCircle2, ChevronRight, MapPin, Radio, ShieldCheck, Trophy, Users } from 'lucide-react';
+import { ArrowRight, ChevronRight, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { CioLogo, EventDateBadge } from '@/components/cio-logo';
@@ -83,16 +83,10 @@ export default function Home() {
         <div className="flex items-center gap-3 sm:gap-6">
           <a
             href="/leaderboard"
-            className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#FCE7D2] hover:text-[#F59E0B] transition flex items-center gap-1.5"
+            className="rounded-xl border border-[#D97706]/40 bg-[#3D1911]/80 px-4 py-2 text-xs sm:text-sm font-bold tracking-wide text-[#FDE68A] hover:bg-[#D95914] hover:text-white transition shadow-sm flex items-center gap-1.5"
           >
             <Trophy className="size-4 text-[#F59E0B]" />
-            Leaderboard
-          </a>
-          <a
-            href="/admin"
-            className="rounded-xl border border-[#D97706]/40 bg-[#3D1911]/80 px-4 py-2 text-xs sm:text-sm font-bold tracking-wide text-[#FDE68A] hover:bg-[#D95914] hover:text-white transition shadow-sm"
-          >
-            Admin Portal
+            Live Leaderboard
           </a>
         </div>
       </nav>
@@ -132,43 +126,6 @@ export default function Home() {
               Hosted by CIO Association Rajasthan Chapter
             </p>
 
-            {/* Bringing Together Card (from Poster) */}
-            <div className="rajasthan-card rounded-2xl p-5 sm:p-6 border border-[#D97706]/30">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-[#F59E0B] mb-4">
-                BRINGING TOGETHER
-              </p>
-              <div className="space-y-3.5">
-                <div className="flex items-start gap-3">
-                  <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#4A1A10] border border-[#D97706]/30 text-[#F59E0B]">
-                    <Users className="size-4" />
-                  </div>
-                  <div>
-                    <strong className="text-sm font-bold text-white block">CIOs, CTOs, CDOs & CISOs from across BFSI</strong>
-                    <span className="text-xs text-[#C9A88F]">Strategic technology leaders shaping digital banking</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#4A1A10] border border-[#D97706]/30 text-[#F59E0B]">
-                    <Calendar className="size-4" />
-                  </div>
-                  <div>
-                    <strong className="text-sm font-bold text-white block">Banking, NBFC & Small Finance Bank Leaders</strong>
-                    <span className="text-xs text-[#C9A88F]">Institutional transformation & compliance excellence</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#4A1A10] border border-[#D97706]/30 text-[#F59E0B]">
-                    <ShieldCheck className="size-4" />
-                  </div>
-                  <div>
-                    <strong className="text-sm font-bold text-white block">Technology Conversations Defining Lending 2030</strong>
-                    <span className="text-xs text-[#C9A88F]">AI architectures, resilient infrastructure & trust</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right Column: Delegate Check-in & Session Card */}
@@ -335,10 +292,9 @@ export default function Home() {
       {/* Footer */}
       <footer className="mx-auto flex max-w-[1400px] flex-col gap-3 border-t border-[#D97706]/20 px-5 py-6 text-xs text-[#C9A88F] sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <span>Organized by <strong>CIO Association Rajasthan Chapter</strong> · BFSI 2030</span>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <a href="/led" target="_blank" className="hover:text-[#F59E0B] underline">Stage LED Screen</a>
           <a href="/leaderboard" className="hover:text-[#F59E0B] underline">Leaderboard</a>
-          <a href="/admin" className="hover:text-[#F59E0B] underline">Admin Console</a>
         </div>
       </footer>
     </main>
