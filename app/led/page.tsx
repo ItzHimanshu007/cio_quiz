@@ -105,10 +105,10 @@ export default function LedPage() {
             {code?.code && (
               <div className="border-l border-[#D97706]/30 pl-8">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#C9A88F]">Code Expires In</span>
-                <strong className={`block text-3xl sm:text-4xl font-mono mt-1 ${remaining < 15 ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>
-                  00:{String(remaining).padStart(2, '0')}
+                <strong className={`block text-3xl sm:text-4xl font-mono mt-1 ${remaining < 30 ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>
+                  {String(Math.floor(remaining / 60)).padStart(2, '0')}:{String(remaining % 60).padStart(2, '0')}
                 </strong>
-                <span className="text-[11px] text-[#C9A88F] block mt-1">Refreshes every 60s</span>
+                <span className="text-[11px] text-[#C9A88F] block mt-1">Refreshes every 2 min</span>
               </div>
             )}
           </div>

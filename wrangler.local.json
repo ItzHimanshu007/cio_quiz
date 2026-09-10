@@ -3,13 +3,6 @@
   "name": "sites-project",
   "main": "dist/server/index.js",
   "compatibility_date": "2026-05-15",
-  "compatibility_flags": ["nodejs_compat"],
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "site-creator-d1",
-      "database_id": "1c85fb58-40ea-403e-bbda-14c32aa254ec",
-      "migrations_dir": "drizzle"
-    }
-  ]
+  "compatibility_flags": ["nodejs_compat"]
 }
+

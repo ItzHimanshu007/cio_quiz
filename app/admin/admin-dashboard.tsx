@@ -517,7 +517,7 @@ function Sessions({ activeSession, onRefresh }: { activeSession: any; onRefresh:
                 {s.status === 'LIVE' && (
                   <div className="mt-4 flex items-center gap-6 rounded-2xl border border-[#D97706]/40 bg-[#1C0C08] px-6 py-3.5">
                     <div className="flex-1">
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F59E0B]">CURRENT 60S CODE</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F59E0B]">CURRENT 2-MIN CODE</p>
                       <strong className="font-mono text-4xl tracking-[0.25em] text-[#FDE68A]">
                         {sessionCode?.code ?? '----'}
                       </strong>
@@ -528,7 +528,7 @@ function Sessions({ activeSession, onRefresh }: { activeSession: any; onRefresh:
                         <div className="flex items-center gap-1.5 text-[#F59E0B]">
                           <Clock3 className="size-4" />
                           <strong className="font-mono text-xl">
-                            00:{String(remaining).padStart(2, '0')}
+                            {String(Math.floor(remaining / 60)).padStart(2, '0')}:{String(remaining % 60).padStart(2, '0')}
                           </strong>
                         </div>
                       </div>

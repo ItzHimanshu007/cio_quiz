@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   crypto.getRandomValues(random);
   const code = String(1000 + (random[0] % 9000));
   const stamp = now();
-  const expiresAt = stamp + 60;
+  const expiresAt = stamp + 120;
   const hash = await hashCode(sessionId, code);
 
   await db().batch([
