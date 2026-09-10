@@ -287,6 +287,7 @@ export default function Home() {
         <div className="flex items-center gap-5">
           <a href="/led" target="_blank" className="hover:text-[#F59E0B] underline">Stage LED Screen</a>
           <a href="/leaderboard" className="hover:text-[#F59E0B] underline">Leaderboard</a>
+          <a href="/admin/login" className="hover:text-[#F59E0B] underline">Admin Console</a>
         </div>
       </footer>
     </main>
