@@ -97,14 +97,6 @@ export default function Home() {
           
           {/* Left Column: Official Poster Identity */}
           <div className="flex flex-col space-y-6">
-            <div className="flex items-center gap-4">
-              <CioLogo size="md" />
-              <div className="h-12 w-px bg-[#D97706]/30" />
-              <div>
-                <span className="text-xs font-bold uppercase tracking-[0.24em] text-[#F59E0B] block">Conclave Summit</span>
-                <span className="text-sm font-medium text-[#C9A88F]">Organized by CIO Association Rajasthan Chapter</span>
-              </div>
-            </div>
 
             {/* Poster Headline */}
             <div>
