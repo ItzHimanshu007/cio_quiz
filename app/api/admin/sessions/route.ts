@@ -59,3 +59,26 @@ export async function POST(request: Request) {
   await audit(user.userId, 'CREATE_SESSION', 'session', id, { number, name });
   return json({ success: true, id }, 201);
 }
+
+export async function DELETE(request: Request) {
+  const user = await getChatGPTUser();
+  if (!user) return json({ error: 'Sign in required.' }, 401);
+
+  const { searchParams } = new URL(request.url);
+  const sessionId = searchParams.get('id');
+
+  if (!sessionId) {
+    return json({ error: 'Session ID is required.' }, 400);
+  }
+
+  try {
+    await db().prepare('DELETE FROM session_codes WHERE session_id = ?').bind(sessionId).run();
+    await db().prepare('DELETE FROM attendance WHERE session_id = ?').bind(sessionId).run();
+    await db().prepare('DELETE FROM feedback WHERE session_id = ?').bind(sessionId).run();
+    await db().prepare('DELETE FROM sessions WHERE id = ?').bind(sessionId).run();
+    await audit(user.userId, 'DELETE_SESSION', 'session', sessionId, {});
+    return json({ success: true });
+  } catch (err) {
+    return json({ error: 'Failed to delete session.' }, 500);
+  }
+}

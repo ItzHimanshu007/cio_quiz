@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   SquareCheckBig,
   Trophy,
+  Trash2,
   Users,
   X,
 } from 'lucide-react';
@@ -339,6 +340,37 @@ function Sessions({ activeSession, onRefresh }: { activeSession: any; onRefresh:
     onRefresh();
   }
 
+  function openCreateModal() {
+    const existingNums = new Set(sessions.map((s: any) => Number(s.sessionNumber)));
+    let nextNum = 1;
+    while (existingNums.has(nextNum)) {
+      nextNum++;
+    }
+    setNewSession({
+      name: '',
+      sessionNumber: String(nextNum),
+      speaker: '',
+      startTime: '10:00 AM',
+      endTime: '11:00 AM',
+      status: 'UPCOMING',
+    });
+    setCreateError('');
+    setShowCreate(true);
+  }
+
+  async function deleteSession(id: string, name: string) {
+    if (!confirm(`Are you sure you want to delete "${name}"? This will remove its codes, attendance, and feedback records.`)) return;
+    setBusy(`${id}:delete`);
+    const r = await fetch(`/api/admin/sessions?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+    setBusy(null);
+    if (!r.ok) {
+      alert('Failed to delete session.');
+      return;
+    }
+    loadSessions();
+    onRefresh();
+  }
+
   const statusColor = (s: string) =>
     s === 'LIVE' ? 'text-[#FDE68A] bg-[#BE123C]/30 border-[#BE123C]'
     : s === 'COMPLETED' ? 'text-[#C9A88F] bg-stone-900/60 border-stone-800'
@@ -351,7 +383,7 @@ function Sessions({ activeSession, onRefresh }: { activeSession: any; onRefresh:
           <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Conclave Agenda</p>
           <h2 className="mt-1 text-3xl font-black text-white">Session Management</h2>
         </div>
-        <Button onClick={() => setShowCreate(true)} className="btn-rajasthan-primary h-10 px-5">
+        <Button onClick={openCreateModal} className="btn-rajasthan-primary h-10 px-5">
           + Create Session
         </Button>
       </div>
@@ -510,6 +542,15 @@ function Sessions({ activeSession, onRefresh }: { activeSession: any; onRefresh:
                     >
                       <BarChart3 className="size-3" />
                       {expandedAnalytics === s.id ? 'Hide Analytics' : 'Session Stats'}
+                    </button>
+                    <button
+                      onClick={() => deleteSession(s.id, s.name)}
+                      disabled={!!busy}
+                      className="flex items-center gap-1.5 rounded-lg border border-[#BE123C]/40 bg-[#BE123C]/10 px-3 py-2 text-xs font-bold text-[#FCA5A5] hover:bg-[#BE123C]/30 hover:border-[#BE123C] transition"
+                      title="Delete this session"
+                    >
+                      {isBusy('delete') ? <Loader2 className="size-3 animate-spin" /> : <Trash2 className="size-3" />}
+                      Delete
                     </button>
                   </div>
                 </div>
