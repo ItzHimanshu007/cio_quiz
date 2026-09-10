@@ -1,4 +1,93 @@
 'use client';
+
 import { useEffect, useState } from 'react';
-import { Building2, Sparkles, Trophy } from 'lucide-react';
-export default function WinnerPage(){const [winner,setWinner]=useState<any>(null);useEffect(()=>{fetch('/api/winner').then(r=>r.json()).then(d=>setWinner(d.winner)).catch(()=>{})},[]);const w=winner||{name:'Rahul Sharma',company:'ABC Bank',prize:'Highest Session Attendee Gift'};return <main className="event-grid grid min-h-screen place-items-center bg-[#07131f] p-5 text-white"><div className="w-full max-w-3xl text-center"><div className="mx-auto flex w-fit items-center gap-3"><Building2 className="size-5 text-cyan-300"/><strong className="tracking-[.16em]">BFSI 2030</strong></div><div className="relative mt-12 overflow-hidden rounded-[36px] border border-amber-300/20 bg-gradient-to-br from-amber-300/[.1] via-white/[.035] to-cyan-300/[.07] px-6 py-16 shadow-2xl"><Sparkles className="absolute left-10 top-10 size-8 text-cyan-300/40"/><Sparkles className="absolute bottom-10 right-10 size-10 text-amber-300/40"/><div className="mx-auto grid size-24 place-items-center rounded-full bg-amber-300 text-[#211900] shadow-[0_0_55px_rgba(252,211,77,.2)]"><Trophy className="size-11"/></div><p className="mt-8 text-sm font-semibold uppercase tracking-[.28em] text-amber-300">BFSI 2030 Winner</p><h1 className="mt-5 text-5xl font-semibold tracking-tight sm:text-7xl">{w.name}</h1><p className="mt-4 text-xl text-slate-400">{w.company}</p><div className="mx-auto mt-9 h-px max-w-xs bg-white/10"/><p className="mt-8 text-sm text-slate-500">{w.prize}</p><p className="mt-2 text-2xl font-medium text-cyan-300">Congratulations!</p></div><p className="mt-8 text-sm text-slate-500">Organized by CIO Association Rajasthan Chapter</p></div></main>}
+import { ArrowRight, Sparkles, Trophy } from 'lucide-react';
+import { CioLogo, EventDateBadge } from '@/components/cio-logo';
+
+export default function WinnerPage() {
+  const [winner, setWinner] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/winner')
+      .then((r) => r.json())
+      .then((d: any) => {
+        setWinner(d.winner);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  return (
+    <main className="rajasthan-backdrop grid min-h-screen place-items-center p-5 text-[#FFF8F0]">
+      <div className="w-full max-w-2xl text-center">
+        <div className="mx-auto flex flex-col items-center">
+          <CioLogo size="md" />
+          <div className="mt-4">
+            <EventDateBadge />
+          </div>
+        </div>
+
+        {winner ? (
+          <div className="rajasthan-card-gold relative mt-10 overflow-hidden rounded-[36px] p-8 sm:p-14 shadow-2xl border-2 border-[#F59E0B]">
+            <Sparkles className="absolute left-8 top-8 size-8 text-[#F59E0B]/40" />
+            <Sparkles className="absolute bottom-8 right-8 size-10 text-[#D95914]/40" />
+
+            <div className="mx-auto grid size-24 place-items-center rounded-full bg-gradient-to-br from-[#F59E0B] to-[#D95914] text-[#1C0C08] shadow-[0_0_55px_rgba(245,158,11,0.4)]">
+              <Trophy className="size-12" />
+            </div>
+
+            <span className="mt-6 inline-block rounded-full border border-[#D97706]/50 bg-[#4A1A10] px-4 py-1 text-xs font-black uppercase tracking-[0.28em] text-[#FDE68A]">
+              CONCLAVE LUCKY DRAW WINNER
+            </span>
+
+            <h1 className="mt-5 text-4xl sm:text-6xl font-black tracking-tight text-white">
+              {winner.name}
+            </h1>
+            <p className="mt-2 text-xl font-bold text-[#F59E0B]">{winner.company}</p>
+
+            <div className="mx-auto mt-6 h-px max-w-xs bg-[#D97706]/30" />
+            <p className="mt-4 text-xs font-bold uppercase tracking-wider text-[#C9A88F]">{winner.prize}</p>
+            <p className="mt-1 text-2xl font-bold text-[#FDE68A]">Congratulations!</p>
+
+            <div className="mt-8">
+              <a
+                href="/leaderboard"
+                className="btn-rajasthan-primary inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold"
+              >
+                View Conclave Leaderboard <ArrowRight className="size-4" />
+              </a>
+            </div>
+          </div>
+        ) : (
+          <div className="rajasthan-card relative mt-10 overflow-hidden rounded-[36px] p-8 sm:p-14 shadow-2xl border border-[#D97706]/30">
+            <div className="mx-auto grid size-20 place-items-center rounded-full bg-[#3E150F] border border-[#D97706]/40 text-[#F59E0B]">
+              <Trophy className="size-10" />
+            </div>
+            <span className="mt-6 inline-block text-xs font-bold uppercase tracking-[0.24em] text-[#F59E0B]">
+              Conclave Lucky Draw
+            </span>
+            <h1 className="mt-3 text-3xl font-black text-white">
+              {loading ? 'Loading Result…' : 'Draw Awaiting Initiation'}
+            </h1>
+            <p className="mx-auto mt-3 max-w-md text-sm text-[#C9A88F]">
+              The lucky draw winner will be selected from tied top-scoring delegates from the admin console.
+            </p>
+            <div className="mt-8 flex justify-center">
+              <a
+                href="/leaderboard"
+                className="btn-rajasthan-primary inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold"
+              >
+                View Live Leaderboard <ArrowRight className="size-4" />
+              </a>
+            </div>
+          </div>
+        )}
+
+        <p className="mt-8 text-xs font-bold text-[#C9A88F]">
+          Organized by <strong>CIO Association Rajasthan Chapter</strong> · BFSI 2030
+        </p>
+      </div>
+    </main>
+  );
+}

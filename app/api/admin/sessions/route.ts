@@ -1,4 +1,61 @@
 import { audit, cleanText, db, ensureDemoData, json, now } from '@/lib/event-server';
 import { getChatGPTUser } from '@/app/chatgpt-auth';
-export async function GET(){const user=await getChatGPTUser();if(!user)return json({error:'Sign in required.'},401);await ensureDemoData();const rows=await db().prepare(`SELECT id,session_number as sessionNumber,name,speaker,description,starts_at as startsAt,ends_at as endsAt,status,attendance_open as attendanceOpen,feedback_open as feedbackOpen,quiz_open as quizOpen,attendance_points as attendancePoints,feedback_points as feedbackPoints,quiz_points as quizPoints FROM sessions ORDER BY session_number`).all();return json({sessions:rows.results})}
-export async function POST(request:Request){const user=await getChatGPTUser();if(!user)return json({error:'Sign in required.'},401);const body=await request.json().catch(()=>({}));const name=cleanText(body.name,120),speaker=cleanText(body.speaker,120),number=Number(body.sessionNumber),startsAt=Number(body.startsAt),endsAt=Number(body.endsAt);if(!name||!speaker||!Number.isInteger(number)||!startsAt||endsAt<=startsAt)return json({error:'Enter a valid session number, title, speaker and time range.'},400);const id=cleanText(body.id,80)||`session-${String(number).padStart(2,'0')}`;try{await db().prepare(`INSERT INTO sessions (id,session_number,name,speaker,description,starts_at,ends_at,status,attendance_open,feedback_open,quiz_open,attendance_points,feedback_points,quiz_points) VALUES (?,?,?,?,?,?,?,'UPCOMING',0,0,0,?,?,?)`).bind(id,number,name,speaker,cleanText(body.description,400)||null,startsAt,endsAt,Number(body.attendancePoints)||10,Number(body.feedbackPoints)||5,Number(body.quizPoints)||10).run()}catch{return json({error:'That session number already exists.'},409)}await audit(user.userId,'CREATE_SESSION','session',id,{number,name});return json({success:true,id},201)}
+
+export async function GET() {
+  const user = await getChatGPTUser();
+  if (!user) return json({ error: 'Sign in required.' }, 401);
+  await ensureDemoData();
+  const rows = await db()
+    .prepare(
+      `SELECT id, session_number as sessionNumber, name, speaker, description, starts_at as startsAt, ends_at as endsAt, status, attendance_open as attendanceOpen, feedback_open as feedbackOpen, attendance_points as attendancePoints, feedback_points as feedbackPoints FROM sessions ORDER BY session_number`,
+    )
+    .all();
+  return json({ sessions: rows.results });
+}
+
+export async function POST(request: Request) {
+  const user = await getChatGPTUser();
+  if (!user) return json({ error: 'Sign in required.' }, 401);
+
+  const body = await request.json().catch(() => ({}));
+  const name = cleanText(body.name, 120);
+  const speaker = cleanText(body.speaker, 120) || 'TBD'; // speaker is optional in UI
+  const number = Number(body.sessionNumber);
+  const startsAt = Number(body.startsAt);
+  const endsAt = Number(body.endsAt);
+
+  if (!name || !Number.isInteger(number) || number < 1) {
+    return json({ error: 'Enter a valid session number (≥1) and session name.' }, 400);
+  }
+
+  const id = cleanText(body.id, 80) || `session-${String(number).padStart(2, '0')}`;
+
+  const status = ['UPCOMING', 'LIVE', 'COMPLETED'].includes(body.status) ? body.status : 'UPCOMING';
+  const attendanceOpen = status === 'LIVE' ? 1 : 0;
+
+  try {
+    await db()
+      .prepare(
+        `INSERT INTO sessions (id, session_number, name, speaker, description, starts_at, ends_at, status, attendance_open, feedback_open, quiz_open, attendance_points, feedback_points, quiz_points) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, ?, 0)`,
+      )
+      .bind(
+        id,
+        number,
+        name,
+        speaker,
+        cleanText(body.description, 400) || null,
+        startsAt || now(),
+        endsAt || (startsAt ? startsAt + 7200 : now() + 7200),
+        status,
+        attendanceOpen,
+        Number(body.attendancePoints) || 10,
+        Number(body.feedbackPoints) || 5,
+      )
+      .run();
+  } catch {
+    return json({ error: 'That session number already exists. Choose a different session number.' }, 409);
+  }
+
+  await audit(user.userId, 'CREATE_SESSION', 'session', id, { number, name });
+  return json({ success: true, id }, 201);
+}

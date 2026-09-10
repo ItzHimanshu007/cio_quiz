@@ -2,17 +2,159 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @custom-variant dark (&:is(.dark *));
+
 @theme inline {
-  --color-background: var(--background); --color-foreground: var(--foreground); --color-card: var(--card); --color-card-foreground: var(--card-foreground); --color-popover: var(--popover); --color-popover-foreground: var(--popover-foreground); --color-primary: var(--primary); --color-primary-foreground: var(--primary-foreground); --color-secondary: var(--secondary); --color-secondary-foreground: var(--secondary-foreground); --color-muted: var(--muted); --color-muted-foreground: var(--muted-foreground); --color-accent: var(--accent); --color-accent-foreground: var(--accent-foreground); --color-destructive: var(--destructive); --color-border: var(--border); --color-input: var(--input); --color-ring: var(--ring); --font-sans: var(--font-geist-sans); --font-mono: var(--font-geist-mono); --font-heading: var(--font-geist-sans); --radius-sm: calc(var(--radius) * .65); --radius-md: calc(var(--radius) * .8); --radius-lg: var(--radius); --radius-xl: calc(var(--radius) * 1.4);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-sans);
+  --radius-sm: calc(var(--radius) * .65);
+  --radius-md: calc(var(--radius) * .8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
 }
-:root { --background: oklch(.175 .035 245); --foreground: oklch(.98 .008 210); --card: oklch(.22 .035 243); --card-foreground: oklch(.98 .008 210); --popover: oklch(.22 .035 243); --popover-foreground: oklch(.98 .008 210); --primary: oklch(.87 .12 190); --primary-foreground: oklch(.18 .035 245); --secondary: oklch(.27 .04 244); --secondary-foreground: oklch(.96 .01 210); --muted: oklch(.27 .03 244); --muted-foreground: oklch(.7 .025 230); --accent: oklch(.84 .13 193); --accent-foreground: oklch(.18 .035 245); --destructive: oklch(.65 .2 25); --border: oklch(1 0 0 / 10%); --input: oklch(1 0 0 / 12%); --ring: oklch(.84 .13 193); --radius: .8rem; }
-.dark { color-scheme: dark; }
-@layer base { * { @apply border-border outline-ring/50; } html { @apply font-sans; } body { @apply bg-background text-foreground; } button, a { -webkit-tap-highlight-color: transparent; } }
-.event-grid { background-image: linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px); background-size:48px 48px; mask-image:linear-gradient(to bottom,black,transparent 92%); }
-.text-gradient { color:#70ead9; text-shadow:0 0 70px rgba(94,234,212,.2); }
-.orb { position:absolute; border-radius:999px; filter:blur(1px); pointer-events:none; }
-.orb-one { width:420px; height:420px; right:-170px; top:-190px; background:radial-gradient(circle,rgba(48,212,195,.14),transparent 68%); }
-.orb-two { width:520px; height:520px; left:-290px; bottom:-360px; background:radial-gradient(circle,rgba(53,129,246,.12),transparent 68%); }
-.panel-glow { position:relative; }
-.panel-glow::before { content:''; position:absolute; inset:-1px; z-index:-1; border-radius:29px; background:linear-gradient(135deg,rgba(94,234,212,.22),transparent 35%,transparent 70%,rgba(59,130,246,.18)); }
-@media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; } }
+
+:root {
+  /* Rich Rajasthani Sandstone & Terracotta Palette */
+  --background: #1C0C08;
+  --foreground: #FFF8F0;
+  --card: #2A120C;
+  --card-foreground: #FFF8F0;
+  --popover: #2A120C;
+  --popover-foreground: #FFF8F0;
+  --primary: #D95914;
+  --primary-foreground: #FFFFFF;
+  --secondary: #3D1911;
+  --secondary-foreground: #FCE7D2;
+  --muted: #3D1911;
+  --muted-foreground: #C9A88F;
+  --accent: #F59E0B;
+  --accent-foreground: #1C0C08;
+  --destructive: #BE123C;
+  --border: rgba(245, 158, 11, 0.18);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #D95914;
+  --radius: 0.9rem;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Rajasthani Heritage Styling Utilities */
+.rajasthan-backdrop {
+  background-image: linear-gradient(to bottom, rgba(28, 12, 8, 0.88), rgba(28, 12, 8, 0.96)), url('/images/backdrop.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+}
+
+.rajasthan-card {
+  background: linear-gradient(145deg, rgba(48, 20, 14, 0.85) 0%, rgba(32, 13, 9, 0.92) 100%);
+  border: 1px solid rgba(229, 169, 103, 0.22);
+  box-shadow: 0 10px 30px -5px rgba(12, 4, 2, 0.5), 0 0 0 1px rgba(217, 89, 20, 0.1);
+}
+
+.rajasthan-card-gold {
+  background: linear-gradient(145deg, rgba(62, 24, 16, 0.9) 0%, rgba(42, 16, 10, 0.95) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.6), 0 0 24px rgba(245, 158, 11, 0.12);
+}
+
+.rajasthan-arch-header {
+  border-top-left-radius: 2.5rem;
+  border-top-right-radius: 2.5rem;
+  position: relative;
+}
+
+.rajasthan-badge {
+  background: linear-gradient(135deg, #4A1A10 0%, #2D0E08 100%);
+  border: 1px solid rgba(229, 169, 103, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.text-saffron-gradient {
+  background: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #D97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-rajasthan-primary {
+  background: linear-gradient(135deg, #D95914 0%, #C2410C 100%);
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(217, 89, 20, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-rajasthan-primary:hover {
+  background: linear-gradient(135deg, #EA580C 0%, #9A3412 100%);
+  box-shadow: 0 6px 24px rgba(217, 89, 20, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-rajasthan-gold {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: #26100B;
+  font-weight: 800;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-rajasthan-gold:hover {
+  background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.45);
+}
+
+/* Subtle gold sandstone grid overlay */
+.event-grid {
+  background-image: linear-gradient(rgba(245, 158, 11, 0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(245, 158, 11, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
