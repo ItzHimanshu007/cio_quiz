@@ -1,36 +1,58 @@
 'use client';
 
-export function CioLogo({ size = 'md', showSubtitle = true }: { size?: 'sm' | 'md' | 'lg'; showSubtitle?: boolean }) {
-  const scale = size === 'sm' ? 'scale-75 origin-left' : size === 'lg' ? 'scale-110' : '';
+export interface CioLogoProps {
+  /** 'bfsi' includes the red BFSI banner; 'standard' is the clean CIO Association logo */
+  variant?: 'bfsi' | 'standard';
+  /** Preset height size */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Show subtle 'Rajasthan Chapter' subtitle below logo */
+  showSubtitle?: boolean;
+  /** 'dark' renders crisp white text for dark backgrounds, 'light' uses original dark text */
+  theme?: 'dark' | 'light';
+  /** Extra CSS classes */
+  className?: string;
+}
+
+export function CioLogo({
+  variant = 'bfsi',
+  size = 'md',
+  showSubtitle = false,
+  theme = 'dark',
+  className = '',
+}: CioLogoProps) {
+  const isBfsi = variant === 'bfsi';
+  const isDark = theme === 'dark';
+
+  const src = isBfsi
+    ? isDark
+      ? '/cio-bfsi-logo-white.png'
+      : '/cio-bfsi-logo.png'
+    : isDark
+    ? '/cio-logo-white.png'
+    : '/cio-logo.png';
+
+  // Responsive sizing tailored for navigation bars, headers, and cards
+  // BFSI logo aspect ratio is ~1.24 (857x690)
+  // Standard logo aspect ratio is ~1.47 (1024x697)
+  const sizeClasses = {
+    sm: isBfsi ? 'h-11 sm:h-12 w-auto' : 'h-8 sm:h-9 w-auto',
+    md: isBfsi ? 'h-16 sm:h-20 w-auto' : 'h-12 sm:h-14 w-auto',
+    lg: isBfsi ? 'h-24 sm:h-28 w-auto' : 'h-18 sm:h-22 w-auto',
+    xl: isBfsi ? 'h-32 sm:h-36 w-auto' : 'h-24 sm:h-28 w-auto',
+  }[size];
 
   return (
-    <div className={`inline-flex flex-col items-center ${scale}`}>
-      {/* CIO Association Colorful Text Logo */}
-      <div className="flex items-center gap-1">
-        <span className="font-extrabold text-[#DC2626] text-2xl sm:text-3xl tracking-tight leading-none">c</span>
-        <span className="font-extrabold text-[#F59E0B] text-2xl sm:text-3xl tracking-tight leading-none">i</span>
-        <div className="relative inline-flex items-center justify-center">
-          <span className="font-extrabold text-[#2563EB] text-2xl sm:text-3xl tracking-tight leading-none">O</span>
-          <span className="absolute -top-0.5 -right-0.5 size-1.5 rounded-full bg-[#2563EB] ring-1 ring-white" />
-          <span className="absolute -bottom-0.5 -left-0.5 size-1.5 rounded-full bg-[#DC2626] ring-1 ring-white" />
-        </div>
-      </div>
-      <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.16em] uppercase text-[#3E150F] dark:text-[#E8C59C] mt-0.5">
-        CIO Association
-      </span>
-
-      {/* BFSI Crimson Ribbon Badge */}
-      <div className="relative mt-0.5 flex items-center justify-center">
-        <div className="relative bg-[#BE123C] text-white px-5 py-0.5 text-[10px] sm:text-[11px] font-black tracking-[0.24em] shadow-sm uppercase">
-          {/* Left Ribbon Notch */}
-          <span className="absolute -left-1.5 top-0 bottom-0 w-2 bg-[#9F1239] [clip-path:polygon(100%_0,0_50%,100%_100%)]" />
-          B F S I
-          {/* Right Ribbon Notch */}
-          <span className="absolute -right-1.5 top-0 bottom-0 w-2 bg-[#9F1239] [clip-path:polygon(0_0,100%_50%,0_100%)]" />
-        </div>
-      </div>
+    <div className={`inline-flex flex-col items-center select-none ${className}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={isBfsi ? 'CIO Association BFSI 2030' : 'CIO Association'}
+        className={`${sizeClasses} object-contain drop-shadow-sm transition-transform duration-200 hover:scale-[1.02]`}
+        loading="eager"
+        decoding="async"
+      />
       {showSubtitle && (
-        <span className="text-[8px] font-semibold tracking-wider text-[#C85210] dark:text-[#E5A967] uppercase mt-1">
+        <span className="text-[9px] font-bold tracking-[0.2em] text-[#F59E0B] uppercase mt-1">
           Rajasthan Chapter
         </span>
       )}
