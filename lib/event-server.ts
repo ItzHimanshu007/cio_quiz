@@ -1,9 +1,9 @@
-import { env } from 'cloudflare:workers';
+import { getDatabase } from './db';
 
 /** @deprecated Use getActiveSession() instead */
 export const LIVE_SESSION_ID = 'session-04';
 
-export function db() { return env.DB; }
+export function db() { return getDatabase(); }
 export function now() { return Math.floor(Date.now() / 1000); }
 export function json(data: unknown, status = 200, headers?: HeadersInit) { return Response.json(data, { status, headers: { 'cache-control': 'no-store', ...headers } }); }
 export function cleanText(value: unknown, max = 160) { return typeof value === 'string' ? value.trim().replace(/[<>]/g, '').slice(0, max) : ''; }
