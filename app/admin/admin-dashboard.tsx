@@ -7,6 +7,7 @@ import {
   BarChart3,
   CircleUserRound,
   Clock3,
+  DatabaseZap,
   Download,
   KeyRound,
   LayoutDashboard,
@@ -22,6 +23,7 @@ import {
   SquareCheckBig,
   Trophy,
   Trash2,
+  UserX,
   Users,
   X,
 } from 'lucide-react';
@@ -611,23 +613,36 @@ function Participants() {
   const [list, setList] = useState<any[]>([]);
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    let cancelled = false;
+  const loadList = useCallback(() => {
     setLoading(true);
     fetch(`/api/admin/participants?q=${encodeURIComponent(q)}`)
       .then((r) => r.json())
-      .then((d) => { if (!cancelled) { setList(d.participants || []); setLoading(false); } })
-      .catch(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
+      .then((d) => { setList(d.participants || []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, [q]);
+
+  useEffect(() => { loadList(); }, [loadList]);
+
+  async function deleteParticipant(id: string, name: string) {
+    if (!confirm(`⚠️ Delete "${name}" permanently?\n\nThis removes their registration, attendance records, scores and all session data. This cannot be undone.`)) return;
+    setDeleting(id);
+    setError('');
+    const r = await fetch(`/api/admin/participants?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+    const d = await r.json();
+    setDeleting(null);
+    if (!r.ok) { setError(d.error || 'Delete failed.'); return; }
+    setList((prev) => prev.filter((p) => p.id !== id));
+  }
 
   return (
     <>
       <div className="flex flex-col justify-between gap-4 sm:flex-row">
         <div>
           <h2 className="text-3xl font-black text-white">Delegates</h2>
-          <p className="mt-1 text-xs text-[#C9A88F]">All registered attendees with mobile numbers and scores.</p>
+          <p className="mt-1 text-xs text-[#C9A88F]">All registered attendees · {list.length} shown</p>
         </div>
         <div className="relative">
           <Search className="absolute left-3.5 top-3 size-4 text-[#C9A88F]" />
@@ -640,23 +655,38 @@ function Participants() {
         </div>
       </div>
 
+      {error && (
+        <div className="mt-3 rounded-xl border border-[#EF4444]/40 bg-[#EF4444]/10 px-4 py-2.5 text-sm font-bold text-[#FCA5A5]">
+          {error}
+        </div>
+      )}
+
       <div className="mt-6 overflow-hidden rounded-2xl border border-[#D97706]/20 rajasthan-card">
-        <div className="grid grid-cols-[1fr_90px] bg-[#1C0C08] px-5 py-3 text-[11px] font-black uppercase tracking-wider text-[#F59E0B] sm:grid-cols-[1.2fr_1fr_120px_80px]">
+        <div className="grid grid-cols-[1fr_80px_36px] bg-[#1C0C08] px-5 py-3 text-[11px] font-black uppercase tracking-wider text-[#F59E0B] sm:grid-cols-[1.2fr_1fr_120px_80px_36px]">
           <span>Delegate</span>
           <span className="hidden sm:block">Company</span>
           <span className="hidden sm:block">Mobile</span>
           <span className="text-right">Points</span>
+          <span />
         </div>
         {list.length > 0 ? (
           list.map((p) => (
-            <div key={p.id} className="grid grid-cols-[1fr_90px] items-center border-t border-[#D97706]/10 px-5 py-3.5 sm:grid-cols-[1.2fr_1fr_120px_80px]">
+            <div key={p.id} className="grid grid-cols-[1fr_80px_36px] items-center border-t border-[#D97706]/10 px-5 py-3 sm:grid-cols-[1.2fr_1fr_120px_80px_36px]">
               <div>
                 <p className="font-bold text-sm text-white">{p.fullName}</p>
-                <p className="text-xs text-[#C9A88F] sm:hidden">{p.company}</p>
+                <p className="text-xs text-[#C9A88F] sm:hidden">{p.company} · {p.mobile}</p>
               </div>
               <span className="hidden text-xs text-[#C9A88F] sm:block">{p.company}</span>
               <span className="hidden font-mono text-xs text-[#FDE68A] sm:block">{p.mobile}</span>
               <strong className="text-right text-base font-black text-[#F59E0B]">{p.totalPoints ?? 0}</strong>
+              <button
+                onClick={() => deleteParticipant(p.id, p.fullName)}
+                disabled={deleting === p.id}
+                title={`Delete ${p.fullName}`}
+                className="ml-1 grid size-7 place-items-center rounded-lg border border-[#BE123C]/40 bg-[#BE123C]/10 text-[#FCA5A5] hover:bg-[#BE123C]/30 hover:border-[#BE123C] transition disabled:opacity-50"
+              >
+                {deleting === p.id ? <Loader2 className="size-3 animate-spin" /> : <Trash2 className="size-3" />}
+              </button>
             </div>
           ))
         ) : (
@@ -1086,15 +1116,69 @@ function Analytics() {
    SETTINGS
 ───────────────────────────────────────── */
 function SettingsPanel() {
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [selectedSession, setSelectedSession] = useState('');
+  const [busy, setBusy] = useState('');
+  const [resetMsg, setResetMsg] = useState('');
+  const [resetErr, setResetErr] = useState('');
+
+  useEffect(() => {
+    fetch('/api/admin/sessions')
+      .then((r) => r.json())
+      .then((d) => {
+        const list = d.sessions || [];
+        setSessions(list);
+        if (list.length > 0) setSelectedSession(list[0].id);
+      })
+      .catch(() => {});
+  }, []);
+
+  async function doReset(scope: string, extraConfirm?: string) {
+    const sessionLabel = scope === 'session'
+      ? sessions.find((s) => s.id === selectedSession)?.name || selectedSession
+      : null;
+    const messages: Record<string, string> = {
+      session: `⚠️ Clear all attendance, feedback and codes for session:\n"${sessionLabel}"?\n\nParticipant registrations will NOT be deleted.`,
+      scores: `⚠️ Reset ALL scores to zero?\n\nParticipant registrations and session records will be kept, but every score will be zeroed out.`,
+      participants: `🚨 DELETE ALL PARTICIPANTS?\n\nThis permanently removes every delegate, their attendance, feedback and scores.\n\nType DELETE to confirm.`,
+      all: `🚨🚨 FULL DATA WIPE?\n\nThis deletes ALL participants, sessions data, scores, draws, and everything else.\n\nType WIPE to confirm.`,
+    };
+    if (!confirm(messages[scope])) return;
+    if (extraConfirm) {
+      const input = window.prompt(extraConfirm);
+      if (!input || input.trim().toUpperCase() !== extraConfirm) {
+        alert('Cancelled — confirmation text did not match.');
+        return;
+      }
+    }
+    setBusy(scope);
+    setResetMsg('');
+    setResetErr('');
+    const body: any = { scope };
+    if (scope === 'session') body.sessionId = selectedSession;
+    const r = await fetch('/api/admin/data-reset', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const d = await r.json();
+    setBusy('');
+    if (!r.ok) { setResetErr(d.error || 'Reset failed.'); return; }
+    setResetMsg(`✓ Reset complete (scope: ${scope})`);
+  }
+
   return (
     <>
-      <h2 className="text-3xl font-black text-white">Settings & Rules</h2>
-      <p className="mt-1 text-xs text-[#C9A88F]">Event configuration and point allocation rules.</p>
+      <h2 className="text-3xl font-black text-white">Settings & Data Management</h2>
+      <p className="mt-1 text-xs text-[#C9A88F]">Event configuration, point rules, and database cleanup tools.</p>
+
+      {/* Point Rules */}
       <div className="mt-7 max-w-2xl space-y-3">
+        <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Point Allocation Rules</p>
         {[
           ['Attendance Points', '10 points awarded per session check-in'],
           ['Feedback Points', '5 points awarded per session rating submission'],
-          ['Code Validity', '60-second rolling code with SHA-256 validation'],
+          ['Code Validity', '2-minute rolling code with SHA-256 validation'],
           ['Rate Limiting', '5 failed code attempts per minute per delegate'],
           ['Duplicate Check', 'Database constraint ensures max 1 attendance record per session'],
           ['Lucky Draw', 'Cryptographic backend selection from tied top scorers'],
@@ -1107,6 +1191,118 @@ function SettingsPanel() {
             <ShieldCheck className="size-5 text-[#F59E0B]" />
           </div>
         ))}
+      </div>
+
+      {/* Data Management */}
+      <div className="mt-10 max-w-2xl">
+        <div className="mb-4 flex items-center gap-2">
+          <DatabaseZap className="size-5 text-[#F59E0B]" />
+          <p className="text-lg font-black text-white">Data Management</p>
+        </div>
+        <p className="mb-5 text-xs text-[#C9A88F]">
+          Use these controls to clean up data before or after the event. All actions are irreversible — use with care.
+        </p>
+
+        {resetMsg && (
+          <div className="mb-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-2.5 text-sm font-bold text-emerald-300">
+            {resetMsg}
+          </div>
+        )}
+        {resetErr && (
+          <div className="mb-4 rounded-xl border border-[#EF4444]/40 bg-[#EF4444]/10 px-4 py-2.5 text-sm font-bold text-[#FCA5A5]">
+            {resetErr}
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {/* Session data wipe */}
+          <div className="rounded-2xl border border-[#D97706]/20 bg-[#1C0C08] p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-bold text-sm text-white">Clear Session Data</p>
+                <p className="mt-0.5 text-xs text-[#C9A88F]">Wipe attendance, feedback & codes for a single session. Participant registrations are kept.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedSession}
+                  onChange={(e) => setSelectedSession(e.target.value)}
+                  className="h-9 rounded-lg border border-[#D97706]/30 bg-[#2A100A] px-2.5 text-xs font-bold text-[#FDE68A] max-w-[180px]"
+                >
+                  {sessions.map((s: any) => (
+                    <option key={s.id} value={s.id}>
+                      Session {String(s.sessionNumber).padStart(2, '0')} — {s.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => doReset('session')}
+                  disabled={!!busy || !selectedSession}
+                  className="flex h-9 items-center gap-1.5 rounded-lg border border-[#D97706]/40 bg-[#2A100A] px-3 text-xs font-bold text-[#FDE68A] hover:bg-[#D95914] hover:text-white transition disabled:opacity-50"
+                >
+                  {busy === 'session' ? <Loader2 className="size-3 animate-spin" /> : <Trash2 className="size-3" />}
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Reset scores only */}
+          <div className="rounded-2xl border border-[#D97706]/20 bg-[#1C0C08] p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-bold text-sm text-white">Reset All Scores to Zero</p>
+                <p className="mt-0.5 text-xs text-[#C9A88F]">Zeroes out every participant's score. Registrations & sessions are kept intact.</p>
+              </div>
+              <button
+                onClick={() => doReset('scores')}
+                disabled={!!busy}
+                className="flex h-9 items-center gap-1.5 rounded-lg border border-[#D97706]/40 bg-[#2A100A] px-3 text-xs font-bold text-[#FDE68A] hover:bg-[#D95914] hover:text-white transition disabled:opacity-50"
+              >
+                {busy === 'scores' ? <Loader2 className="size-3 animate-spin" /> : <RefreshCw className="size-3" />}
+                Reset Scores
+              </button>
+            </div>
+          </div>
+
+          {/* Delete all participants */}
+          <div className="rounded-2xl border border-[#BE123C]/30 bg-[#BE123C]/5 p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-bold text-sm text-[#FCA5A5]">Delete All Participants</p>
+                <p className="mt-0.5 text-xs text-[#C9A88F]">Permanently removes all registered delegates, their attendance, feedback and scores. Sessions are kept.</p>
+              </div>
+              <button
+                onClick={() => doReset('participants', 'DELETE')}
+                disabled={!!busy}
+                className="flex h-9 items-center gap-1.5 rounded-lg border border-[#BE123C]/50 bg-[#BE123C]/20 px-3 text-xs font-bold text-[#FCA5A5] hover:bg-[#BE123C]/40 hover:border-[#BE123C] transition disabled:opacity-50"
+              >
+                {busy === 'participants' ? <Loader2 className="size-3 animate-spin" /> : <UserX className="size-3" />}
+                Delete All
+              </button>
+            </div>
+          </div>
+
+          {/* Full wipe */}
+          <div className="rounded-2xl border-2 border-[#BE123C]/60 bg-[#BE123C]/10 p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <AlertTriangle className="size-4 text-[#EF4444]" />
+                  <p className="font-bold text-sm text-[#FCA5A5]">Full Data Wipe</p>
+                </div>
+                <p className="mt-0.5 text-xs text-[#C9A88F]">Deletes ALL data: participants, attendance, scores, draws. Sessions are not deleted. Cannot be undone.</p>
+              </div>
+              <button
+                onClick={() => doReset('all', 'WIPE')}
+                disabled={!!busy}
+                className="flex h-9 items-center gap-1.5 rounded-lg border-2 border-[#BE123C]/80 bg-[#BE123C]/30 px-3 text-xs font-bold text-[#FCA5A5] hover:bg-[#BE123C]/60 hover:text-white transition disabled:opacity-50"
+              >
+                {busy === 'all' ? <Loader2 className="size-3 animate-spin" /> : <Trash2 className="size-3" />}
+                Full Wipe
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

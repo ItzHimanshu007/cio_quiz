@@ -1,4 +1,95 @@
 import { audit, cleanText, db, json, normalizeMobile } from '@/lib/event-server';
 import { getChatGPTUser } from '@/app/chatgpt-auth';
-export async function GET(request:Request){const user=await getChatGPTUser();if(!user)return json({error:'Sign in required.'},401);const q=cleanText(new URL(request.url).searchParams.get('q'),80);const like=`%${q}%`;const rows=await db().prepare(`SELECT p.id,p.full_name as fullName,p.mobile,p.company,p.designation,p.email,p.enabled,s.sessions_attended as sessionsAttended,s.attendance_points as attendancePoints,s.feedback_points as feedbackPoints,s.quiz_points as quizPoints,s.total_points as totalPoints FROM participants p LEFT JOIN scores s ON s.participant_id=p.id WHERE ?='' OR p.full_name LIKE ? OR p.mobile LIKE ? OR p.company LIKE ? OR p.designation LIKE ? ORDER BY s.total_points DESC LIMIT 100`).bind(q,like,like,like,like).all();return json({participants:rows.results})}
-export async function PATCH(request:Request){const user=await getChatGPTUser();if(!user)return json({error:'Sign in required.'},401);const body=await request.json().catch(()=>({}));const id=cleanText(body.id,80),reason=cleanText(body.reason,200);if(!id||!reason)return json({error:'Participant and reason are required.'},400);const before=await db().prepare(`SELECT full_name as fullName,mobile,company,designation,email,enabled FROM participants WHERE id=?`).bind(id).first();if(!before)return json({error:'Participant not found.'},404);await db().prepare(`UPDATE participants SET full_name=?,mobile=?,company=?,designation=?,email=?,enabled=? WHERE id=?`).bind(cleanText(body.fullName,80),normalizeMobile(body.mobile),cleanText(body.company,100),cleanText(body.designation,80)||null,cleanText(body.email,120)||null,body.enabled===false?0:1,id).run();await audit(user.userId,'UPDATE_PARTICIPANT','participant',id,{before,reason});return json({success:true})}
+
+export async function GET(request: Request) {
+  const user = await getChatGPTUser();
+  if (!user) return json({ error: 'Sign in required.' }, 401);
+  const q = cleanText(new URL(request.url).searchParams.get('q'), 80);
+  const like = `%${q}%`;
+  const rows = await db()
+    .prepare(
+      `SELECT p.id, p.full_name as fullName, p.mobile, p.company, p.designation, p.email, p.enabled,
+              s.sessions_attended as sessionsAttended, s.attendance_points as attendancePoints,
+              s.feedback_points as feedbackPoints, s.quiz_points as quizPoints, s.total_points as totalPoints
+       FROM participants p LEFT JOIN scores s ON s.participant_id = p.id
+       WHERE ? = '' OR p.full_name LIKE ? OR p.mobile LIKE ? OR p.company LIKE ? OR p.designation LIKE ?
+       ORDER BY s.total_points DESC LIMIT 200`,
+    )
+    .bind(q, like, like, like, like)
+    .all();
+  return json({ participants: rows.results });
+}
+
+export async function PATCH(request: Request) {
+  const user = await getChatGPTUser();
+  if (!user) return json({ error: 'Sign in required.' }, 401);
+  const body = await request.json().catch(() => ({}));
+  const id = cleanText(body.id, 80);
+  const reason = cleanText(body.reason, 200);
+  if (!id || !reason) return json({ error: 'Participant and reason are required.' }, 400);
+  const before = await db()
+    .prepare(`SELECT full_name as fullName, mobile, company, designation, email, enabled FROM participants WHERE id = ?`)
+    .bind(id)
+    .first();
+  if (!before) return json({ error: 'Participant not found.' }, 404);
+  await db()
+    .prepare(`UPDATE participants SET full_name=?, mobile=?, company=?, designation=?, email=?, enabled=? WHERE id=?`)
+    .bind(
+      cleanText(body.fullName, 80),
+      normalizeMobile(body.mobile),
+      cleanText(body.company, 100),
+      cleanText(body.designation, 80) || null,
+      cleanText(body.email, 120) || null,
+      body.enabled === false ? 0 : 1,
+      id,
+    )
+    .run();
+  await audit(user.userId, 'UPDATE_PARTICIPANT', 'participant', id, { before, reason });
+  return json({ success: true });
+}
+
+export async function DELETE(request: Request) {
+  const user = await getChatGPTUser();
+  if (!user) return json({ error: 'Sign in required.' }, 401);
+
+  const { searchParams } = new URL(request.url);
+  const participantId = searchParams.get('id');
+
+  if (!participantId) return json({ error: 'Participant ID required.' }, 400);
+
+  const participant = await db()
+    .prepare(`SELECT full_name as fullName, mobile, company FROM participants WHERE id = ?`)
+    .bind(participantId)
+    .first<{ fullName: string; mobile: string; company: string }>();
+
+  if (!participant) return json({ error: 'Participant not found.' }, 404);
+
+  try {
+    // Cascade-delete all records in dependency order
+    await db().prepare(`DELETE FROM quiz_responses WHERE participant_id = ?`).bind(participantId).run();
+    await db().prepare(`DELETE FROM code_attempts WHERE participant_id = ?`).bind(participantId).run();
+    await db().prepare(`DELETE FROM feedback WHERE participant_id = ?`).bind(participantId).run();
+    await db().prepare(`DELETE FROM attendance WHERE participant_id = ?`).bind(participantId).run();
+    await db().prepare(`DELETE FROM scores WHERE participant_id = ?`).bind(participantId).run();
+    await db().prepare(`DELETE FROM participant_sessions WHERE participant_id = ?`).bind(participantId).run();
+    // Remove from draws tables
+    await db().prepare(`DELETE FROM draw_participants WHERE participant_id = ?`).bind(participantId).run();
+    // Null out winner reference in draws if this participant won
+    await db()
+      .prepare(`UPDATE draws SET winner_participant_id = NULL WHERE winner_participant_id = ?`)
+      .bind(participantId)
+      .run();
+    // Finally delete the participant
+    await db().prepare(`DELETE FROM participants WHERE id = ?`).bind(participantId).run();
+
+    await audit(user.userId, 'DELETE_PARTICIPANT', 'participant', participantId, {
+      name: participant.fullName,
+      mobile: participant.mobile,
+      company: participant.company,
+    });
+    return json({ success: true });
+  } catch (err: any) {
+    console.error('Delete participant error:', err);
+    return json({ error: `Failed to delete participant: ${err?.message || 'Unknown error'}` }, 500);
+  }
+}
