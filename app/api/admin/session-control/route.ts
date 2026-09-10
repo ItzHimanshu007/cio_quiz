@@ -1,0 +1,4 @@
+import { audit, cleanText, db, json, LIVE_SESSION_ID } from '@/lib/event-server';
+import { getChatGPTUser } from '@/app/chatgpt-auth';
+const allowed=['attendanceOpen','feedbackOpen','quizOpen'] as const;
+export async function POST(request:Request){const user=await getChatGPTUser();if(!user)return json({error:'Sign in required.'},401);const body=await request.json().catch(()=>({}));const field=allowed.find(x=>x===body.field);if(!field||typeof body.open!=='boolean')return json({error:'Invalid control.'},400);const column={attendanceOpen:'attendance_open',feedbackOpen:'feedback_open',quizOpen:'quiz_open'}[field];await db().prepare(`UPDATE sessions SET ${column}=? WHERE id=?`).bind(body.open?1:0,cleanText(body.sessionId)||LIVE_SESSION_ID).run();await audit(user.userId,'SESSION_CONTROL','session',LIVE_SESSION_ID,{field,open:body.open});return json({success:true});}

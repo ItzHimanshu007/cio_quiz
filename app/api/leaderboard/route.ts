@@ -1,0 +1,2 @@
+import { db, ensureDemoData, json } from '@/lib/event-server';
+export async function GET() { await ensureDemoData(); const rows = await db().prepare(`SELECT p.full_name as name, p.company, s.total_points as totalPoints, s.sessions_attended as sessionsAttended, (s.feedback_points + s.quiz_points) as engagementScore FROM scores s JOIN participants p ON p.id = s.participant_id WHERE p.enabled = 1 ORDER BY s.total_points DESC, s.updated_at ASC LIMIT 50`).all(); return json({ leaderboard: rows.results }); }
