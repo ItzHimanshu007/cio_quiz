@@ -31,7 +31,7 @@ export default function LedPage() {
           <div className="mt-[7vh] flex items-center gap-8"><div><p className="text-xl uppercase tracking-[.2em] text-slate-500">Session code</p><strong className="mt-2 block font-mono text-[clamp(4.5rem,10vw,10rem)] tracking-[.14em] text-cyan-300">{code?.code || '----'}</strong></div><div className="border-l border-white/10 pl-8"><span className="text-slate-500">Valid for</span><strong className="block text-3xl">00:{String(remaining).padStart(2, '0')}</strong></div></div>
         </div>
         <div className="rounded-[36px] border border-white/10 bg-white p-7 shadow-[0_0_80px_rgba(103,232,215,.12)]">
-          <QRCodeSVG value="https://event-domain.com/attend/session-04" size={300} className="h-auto w-[min(22vw,360px)] min-w-[220px]" level="H" bgColor="#ffffff" fgColor="#07131f" marginSize={1} />
+          <QRCodeSVG value="https://bfsi-2030-engagement.mehtaniiiii.chatgpt.site/attend/session-04" size={300} className="h-auto w-[min(22vw,360px)] min-w-[220px]" level="H" bgColor="#ffffff" fgColor="#07131f" marginSize={1} />
           <p className="mt-5 text-center text-lg font-bold uppercase tracking-[.16em] text-[#07131f]">Scan to participate</p>
         </div>
       </section>
