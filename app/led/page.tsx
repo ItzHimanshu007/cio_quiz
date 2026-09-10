@@ -146,7 +146,7 @@ export default function LedPage() {
       <footer className="flex items-center justify-between border-t border-[#D97706]/30 pt-4 text-xs font-bold text-[#C9A88F]">
         <span>Organized by <strong>CIO Association Rajasthan Chapter</strong> · Jaipur</span>
         <a href="/leaderboard" target="_blank" className="flex items-center gap-1.5 text-sm text-[#F59E0B] hover:text-[#FDE68A] uppercase tracking-wider">
-          <Trophy className="size-4" /> Live Conclave Leaderboard →
+          <Trophy className="size-4" /> Live Leaderboard →
         </a>
       </footer>
     </main>

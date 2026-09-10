@@ -55,7 +55,7 @@ export default function WinnerPage() {
                 href="/leaderboard"
                 className="btn-rajasthan-primary inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold"
               >
-                View Conclave Leaderboard <ArrowRight className="size-4" />
+                View Leaderboard <ArrowRight className="size-4" />
               </a>
             </div>
           </div>

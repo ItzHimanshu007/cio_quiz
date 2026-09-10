@@ -45,7 +45,7 @@ export default function Leaderboard() {
         <div className="text-center">
           <EventDateBadge />
           <h1 className="mt-6 text-4xl sm:text-6xl font-black tracking-tight text-white">
-            <span className="text-[#FDE68A]">Conclave</span> <span className="text-saffron-gradient">Leaderboard</span>
+            <span className="text-saffron-gradient">Leaderboard</span>
           </h1>
           <p className="mt-2 text-sm sm:text-base text-[#C9A88F]">
             Rankings update live as delegates verify attendance and submit session feedback.

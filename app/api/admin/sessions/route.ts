@@ -52,8 +52,13 @@ export async function POST(request: Request) {
         Number(body.feedbackPoints) || 5,
       )
       .run();
-  } catch {
-    return json({ error: 'That session number already exists. Choose a different session number.' }, 409);
+  } catch (err: any) {
+    console.error('Session create error:', err);
+    const msg = String(err?.message || err || '');
+    if (msg.includes('UNIQUE') || msg.includes('unique')) {
+      return json({ error: `Session number ${number} already exists. Choose a different session number.` }, 409);
+    }
+    return json({ error: `Database error: ${msg || 'Failed to save session'}` }, 500);
   }
 
   await audit(user.userId, 'CREATE_SESSION', 'session', id, { number, name });
