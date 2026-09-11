@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     crypto.getRandomValues(random);
     const newCode = String(1000 + (random[0] % 9000));
     const stamp = now();
-    const expiresAt = stamp + 120;
+    const expiresAt = stamp + 60;
     const hash = await hashCode(sessionId, newCode);
     await db().batch([
       db().prepare(`UPDATE session_codes SET revoked_at=? WHERE session_id=? AND revoked_at IS NULL`).bind(stamp, sessionId),
