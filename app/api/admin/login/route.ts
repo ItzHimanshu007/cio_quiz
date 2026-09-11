@@ -26,8 +26,8 @@ export async function POST(request: Request) {
   // Generate simple tamper-proof session token
   const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
   const payload = JSON.stringify({
-    userId: 'admin-conclave',
-    displayName: 'Conclave Administrator',
+    userId: 'admin',
+    displayName: 'Administrator',
     email: 'admin@bfsi2030.cio',
     expiresAt,
   });
@@ -46,8 +46,8 @@ export async function POST(request: Request) {
   return json({
     success: true,
     user: {
-      userId: 'admin-conclave',
-      displayName: 'Conclave Administrator',
+      userId: 'admin',
+      displayName: 'Administrator',
     },
   });
 }

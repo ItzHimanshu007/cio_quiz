@@ -48,8 +48,8 @@ export async function POST(request: Request) {
         endsAt || (startsAt ? startsAt + 7200 : now() + 7200),
         status,
         attendanceOpen,
-        Number(body.attendancePoints) || 10,
-        Number(body.feedbackPoints) || 5,
+        Number(body.attendancePoints) || 100,
+        0, // feedbackPoints is 0
       )
       .run();
   } catch (err: any) {

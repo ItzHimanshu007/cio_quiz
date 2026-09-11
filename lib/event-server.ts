@@ -30,7 +30,7 @@ export async function ensureDemoData() {
   if (typeof process !== 'undefined' && process.env.NODE_ENV === 'production') return;
   const timestamp = now();
   // Insert as UPCOMING so admin must explicitly open it — avoids hardcoded LIVE assumption
-  await db().prepare(`INSERT OR IGNORE INTO sessions (id, session_number, name, speaker, description, starts_at, ends_at, status, attendance_open, feedback_open, quiz_open, attendance_points, feedback_points, quiz_points) VALUES (?, ?, ?, ?, ?, ?, ?, 'UPCOMING', 0, 0, 0, 10, 5, 10)`)
+  await db().prepare(`INSERT OR IGNORE INTO sessions (id, session_number, name, speaker, description, starts_at, ends_at, status, attendance_open, feedback_open, quiz_open, attendance_points, feedback_points, quiz_points) VALUES (?, ?, ?, ?, ?, ?, ?, 'UPCOMING', 0, 0, 0, 100, 0, 0)`)
     .bind(LIVE_SESSION_ID, 4, 'Digital Transformation in BFSI', 'Priya Mehta · FutureBank Labs', 'How intelligent infrastructure is reshaping financial services.', timestamp - 1200, timestamp + 2400)
     .run();
 }

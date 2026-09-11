@@ -126,15 +126,15 @@ export default function AdminDashboard({ section = 'dashboard', adminName }: { s
               <PanelLeft />
             </button>
             <div>
-              <p className="text-xs text-[#C9A88F]">BFSI 2030 Conclave / Jaipur</p>
+              <p className="text-xs text-[#C9A88F]">BFSI 2030 / Jaipur</p>
               <h1 className="text-lg font-bold capitalize text-white">
-                {section === 'dashboard' ? 'Conclave Operations' : section}
+                {section === 'dashboard' ? 'Event Operations' : section}
               </h1>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <span className="hidden items-center gap-2 rounded-full bg-[#BE123C]/20 border border-[#BE123C]/40 px-3 py-1 text-xs font-bold text-[#FCA5A5] sm:flex">
-              <Radio className="size-3 text-[#EF4444] animate-pulse" /> Conclave Active
+              <Radio className="size-3 text-[#EF4444] animate-pulse" /> Event Active
             </span>
             <a
               href="/led"
@@ -175,7 +175,7 @@ function Dashboard({ overview: o }: { overview: any }) {
     <>
       <div className="mb-7 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Conclave Overview</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Event Overview</p>
           <h2 className="mt-1 text-3xl font-black text-white">Event Operations</h2>
         </div>
         {o.activeSession ? (
@@ -231,7 +231,7 @@ function Dashboard({ overview: o }: { overview: any }) {
         </div>
 
         <div className="rajasthan-card rounded-2xl p-6 border border-[#D97706]/20">
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Conclave Leader</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Current Leader</p>
           <div className="mt-4 grid size-12 place-items-center rounded-xl bg-[#F59E0B] text-[#1C0C08]">
             <Trophy className="size-6" />
           </div>
@@ -382,7 +382,7 @@ function Sessions({ activeSession, onRefresh }: { activeSession: any; onRefresh:
     <>
       <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Conclave Agenda</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Agenda</p>
           <h2 className="mt-1 text-3xl font-black text-white">Session Management</h2>
         </div>
         <Button onClick={openCreateModal} className="btn-rajasthan-primary h-10 px-5">
@@ -392,7 +392,7 @@ function Sessions({ activeSession, onRefresh }: { activeSession: any; onRefresh:
 
       {showCreate && (
         <div className="mb-6 rajasthan-card-gold rounded-2xl p-5 border border-[#D97706]/40">
-          <h3 className="mb-4 font-bold text-lg text-[#FDE68A]">New Conclave Session</h3>
+          <h3 className="mb-4 font-bold text-lg text-[#FDE68A]">New Session</h3>
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="block">
               <span className="mb-1 block text-xs font-bold text-[#C9A88F]">Session Number *</span>
@@ -726,7 +726,7 @@ function AdminLeaderboard() {
     <>
       <div className="mb-7 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Official Conclave Rankings</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Official Rankings</p>
           <h2 className="mt-1 text-3xl font-black text-white">Leaderboard Console</h2>
         </div>
         <button
@@ -867,7 +867,7 @@ function Draws({ overview }: { overview: any }) {
     const r = await fetch('/api/admin/draw', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ prize: 'BFSI 2030 Conclave Gift Award' }),
+      body: JSON.stringify({ prize: 'BFSI 2030 Gift Award' }),
     });
     const d = await r.json();
     setBusy(false);
@@ -883,7 +883,7 @@ function Draws({ overview }: { overview: any }) {
     <>
       <div className="mb-7 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Conclave Award Resolution</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Award Resolution</p>
           <h2 className="mt-1 text-3xl font-black text-white">Lucky Draw</h2>
         </div>
         <button
@@ -1061,7 +1061,7 @@ function Analytics() {
     <>
       <div className="mb-7 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Conclave Metrics</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Event Metrics</p>
           <h2 className="mt-1 text-3xl font-black text-white">Session Analytics</h2>
         </div>
         {sessions.length > 0 && (
@@ -1176,8 +1176,8 @@ function SettingsPanel() {
       <div className="mt-7 max-w-2xl space-y-3">
         <p className="text-xs font-bold uppercase tracking-wider text-[#D97706]">Point Allocation Rules</p>
         {[
-          ['Attendance Points', '10 points awarded per session check-in'],
-          ['Feedback Points', '5 points awarded per session rating submission'],
+          ['Attendance Points', '100 points awarded per session check-in'],
+          ['Feedback Points', '0 points (no feedback points awarded)'],
           ['Code Validity', '1-minute rolling code with SHA-256 validation'],
           ['Rate Limiting', '5 failed code attempts per minute per delegate'],
           ['Duplicate Check', 'Database constraint ensures max 1 attendance record per session'],

@@ -48,7 +48,7 @@ export default function Leaderboard() {
             <span className="text-saffron-gradient">Leaderboard</span>
           </h1>
           <p className="mt-2 text-sm sm:text-base text-[#C9A88F]">
-            Rankings update live as delegates verify attendance and submit session feedback.
+            Rankings update live as delegates verify attendance.
           </p>
         </div>
 
@@ -105,7 +105,7 @@ export default function Leaderboard() {
             <div className="rajasthan-card rounded-3xl p-12 text-center border border-[#D97706]/30">
               <Trophy className="mx-auto size-12 text-[#F59E0B]/40" />
               <h2 className="mt-4 text-xl font-bold text-white">
-                {loading ? 'Loading Conclave Rankings…' : 'Awaiting First Delegate Check-ins'}
+                {loading ? 'Loading Rankings…' : 'Awaiting First Delegate Check-ins'}
               </h2>
               <p className="mt-2 text-sm text-[#C9A88F]">
                 Delegate scores will appear here after attendance verification.

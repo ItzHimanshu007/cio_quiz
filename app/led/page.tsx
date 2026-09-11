@@ -66,7 +66,7 @@ export default function LedPage() {
           {s ? (
             <>
               <div className="inline-flex items-center gap-2 rounded-full border border-[#D97706]/40 bg-[#3E150F] px-4 py-1.5 text-sm font-bold uppercase tracking-[0.2em] text-[#FDE68A]">
-                Conclave Session {sessionNum}
+                Session {sessionNum}
               </div>
               <h1 className="text-[clamp(3.2rem,6.8vw,6.5rem)] font-black leading-[0.92] tracking-tight text-white drop-shadow-md">
                 {s.name}
@@ -79,7 +79,7 @@ export default function LedPage() {
             </>
           ) : (
             <div className="space-y-4">
-              <span className="text-sm font-bold uppercase tracking-[0.2em] text-[#F59E0B]">BFSI 2030 Conclave</span>
+              <span className="text-sm font-bold uppercase tracking-[0.2em] text-[#F59E0B]">BFSI 2030</span>
               <h1 className="text-[clamp(2.5rem,5vw,5rem)] font-black text-[#C9A88F]">
                 Next Session Starting Shortly
               </h1>
@@ -136,7 +136,7 @@ export default function LedPage() {
               SCAN TO PARTICIPATE
             </p>
             <p className="text-xs font-bold text-[#F59E0B] mt-0.5">
-              10 Pts Attendance + 5 Pts Feedback
+              100 Pts Attendance
             </p>
           </div>
         </div>

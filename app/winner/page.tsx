@@ -38,7 +38,7 @@ export default function WinnerPage() {
             </div>
 
             <span className="mt-6 inline-block rounded-full border border-[#D97706]/50 bg-[#4A1A10] px-4 py-1 text-xs font-black uppercase tracking-[0.28em] text-[#FDE68A]">
-              CONCLAVE LUCKY DRAW WINNER
+              LUCKY DRAW WINNER
             </span>
 
             <h1 className="mt-5 text-4xl sm:text-6xl font-black tracking-tight text-white">
@@ -65,7 +65,7 @@ export default function WinnerPage() {
               <Trophy className="size-10" />
             </div>
             <span className="mt-6 inline-block text-xs font-bold uppercase tracking-[0.24em] text-[#F59E0B]">
-              Conclave Lucky Draw
+              Lucky Draw
             </span>
             <h1 className="mt-3 text-3xl font-black text-white">
               {loading ? 'Loading Result…' : 'Draw Awaiting Initiation'}

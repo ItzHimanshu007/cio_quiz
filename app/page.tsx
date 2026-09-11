@@ -75,7 +75,7 @@ export default function Home() {
         <div className="flex items-center gap-4">
           <CioLogo size="sm" showSubtitle={false} />
           <div className="hidden sm:block border-l border-[#D97706]/30 pl-4">
-            <span className="block text-xs font-bold uppercase tracking-[0.2em] text-[#F59E0B]">Conclave 2026</span>
+            <span className="block text-xs font-bold uppercase tracking-[0.2em] text-[#F59E0B]">BFSI 2030</span>
             <span className="text-[11px] text-[#C9A88F]">Rajasthan Chapter</span>
           </div>
         </div>
@@ -128,10 +128,10 @@ export default function Home() {
                 <div className="flex items-start justify-between border-b border-[#D97706]/20 pb-5">
                   <div>
                     <span className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-[#F59E0B]">
-                      {activeSession ? `${sessionLabel} · Live Now` : 'Conclave Sessions'}
+                      {activeSession ? `${sessionLabel} · Live Now` : 'Sessions'}
                     </span>
                     <h2 className="mt-1 text-2xl font-bold text-white">
-                      {activeSession?.name ?? 'Next Conclave Session Starting Soon'}
+                      {activeSession?.name ?? 'Next Session Starting Soon'}
                     </h2>
                   </div>
                   {activeSession && (
@@ -150,7 +150,7 @@ export default function Home() {
                         Attendance Code Verification
                       </p>
                       <p className="mt-1 text-sm text-[#C9A88F]">
-                        Enter the 4-digit code shown on the auditorium LED screen to record attendance and earn 15 points.
+                        Enter the 4-digit code shown on the auditorium LED screen to record attendance and earn 100 points.
                       </p>
                       <Button
                         onClick={() => setEntered(true)}
@@ -168,7 +168,7 @@ export default function Home() {
                     </div>
                   )}
 
-                  {/* Conclave Leaderboard Mini-view */}
+                  {/* Leaderboard Mini-view */}
                   <div className="mt-6">
                     <div className="mb-3 flex items-center justify-between">
                       <span className="text-xs font-bold uppercase tracking-wider text-[#F59E0B]">
@@ -206,7 +206,7 @@ export default function Home() {
                       </div>
                     ) : (
                       <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-[#C9A88F]">
-                        Scores will update as delegates verify attendance and submit session feedback.
+                        Scores will update as delegates verify attendance.
                       </div>
                     )}
                   </div>

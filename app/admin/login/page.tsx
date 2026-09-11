@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
             href="/"
             className="flex items-center gap-1.5 text-xs font-bold text-[#FDE68A] hover:text-[#F59E0B] uppercase tracking-wider transition"
           >
-            <ChevronLeft className="size-4" /> Conclave Home
+            <ChevronLeft className="size-4" /> Home
           </a>
           <span className="text-[11px] font-bold text-[#C9A88F] uppercase tracking-wider">
             Authorized Personnel Only
@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
               Sign In to Event Control
             </h1>
             <p className="mt-1.5 text-xs text-[#C9A88F]">
-              Enter the administrator access passcode to manage conclave sessions, attendance codes, and leaderboards.
+              Enter the administrator access passcode to manage sessions, attendance codes, and leaderboards.
             </p>
           </div>
 

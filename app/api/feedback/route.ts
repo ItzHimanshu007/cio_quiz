@@ -54,18 +54,18 @@ export async function POST(request: Request) {
           rating,
           rating,   // relevance = same as rating (field exists in schema but not used in UX)
           remark,   // takeaway column holds the optional remark
-          session.points,
+          0,        // feedback points = 0
           stamp,
         ),
       db()
         .prepare(
-          `UPDATE scores SET feedback_points = feedback_points + ?, total_points = total_points + ?, updated_at = ? WHERE participant_id = ?`,
+          `UPDATE scores SET updated_at = ? WHERE participant_id = ?`,
         )
-        .bind(session.points, session.points, stamp, participant.id),
+        .bind(stamp, participant.id),
     ]);
   } catch {
     return json({ error: "You've already submitted feedback for this session." }, 409);
   }
 
-  return json({ success: true, points: session.points });
+  return json({ success: true, points: 0 });
 }

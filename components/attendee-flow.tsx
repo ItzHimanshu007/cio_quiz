@@ -120,7 +120,7 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
         setTotalEarned(0);
         setStep('complete');
       } else {
-        setTotalEarned(d.points || 10);
+        setTotalEarned(d.points || 100);
         setStep('feedback');
       }
     } catch {
@@ -170,7 +170,7 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
       }
       setParticipant(d.participant);
       if (d.attendance?.points) setAttendancePoints(d.attendance.points);
-      setTotalEarned(d.attendance?.points || 10);
+      setTotalEarned(d.attendance?.points || 100);
 
       setStep('feedback');
     } catch {
@@ -209,7 +209,7 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
         return;
       }
 
-      const fb = d.points || 5;
+      const fb = d.points || 0;
       setFeedbackPoints(fb);
       setTotalEarned((prev) => prev + fb);
       setStep('complete');
@@ -229,7 +229,7 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
         {/* Top Header with CIO Logo */}
         <div className="mb-6 flex items-center justify-between text-xs text-[#C9A88F]">
           <a href="/" className="flex items-center gap-1.5 font-bold hover:text-[#F59E0B] text-[#FDE68A] uppercase tracking-wider">
-            <ChevronLeft className="size-4" /> Conclave Home
+            <ChevronLeft className="size-4" /> Home
           </a>
           <div className="scale-75 origin-right">
             <CioLogo size="sm" showSubtitle={false} />
@@ -316,7 +316,7 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
                 Enter Delegate Details
               </h1>
               <p className="mt-1 text-xs text-[#C9A88F]">
-                Required once. Your points track across all conclave sessions automatically.
+                Required once. Your points track across all sessions automatically.
               </p>
 
               <form onSubmit={submitRegistration} className="mt-6 space-y-4">
@@ -374,7 +374,7 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
                   Session Feedback
                 </span>
                 <span className="rounded-full bg-[#BE123C]/20 border border-[#BE123C]/40 px-2.5 py-0.5 text-xs font-bold text-[#FCA5A5]">
-                  +10 Pts Verified
+                  +100 Pts Verified
                 </span>
               </div>
 
@@ -382,7 +382,7 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
                 Rate this Session
               </h1>
               <p className="mt-1 text-xs text-[#C9A88F]">
-                Provide your rating to earn an additional +{feedbackPoints} points.
+                Provide your rating and key takeaways for this session.
               </p>
 
               <form onSubmit={submitFeedback} className="mt-6">
@@ -411,7 +411,7 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
                   disabled={busy}
                   className="btn-rajasthan-primary mt-6 h-12 w-full rounded-xl text-base"
                 >
-                  {busy ? <Loader2 className="animate-spin" /> : 'Submit Feedback & Earn Points'}
+                  {busy ? <Loader2 className="animate-spin" /> : 'Submit Feedback'}
                 </Button>
               </form>
             </>
@@ -433,10 +433,10 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
                   </p>
                   <div className="mt-5 flex justify-center gap-4 text-xs font-bold text-[#FCE7D2]">
                     <span className="flex items-center gap-1.5 rounded-lg bg-[#4A1A10] px-3 py-1 border border-[#D97706]/30">
-                      <Check className="size-4 text-[#F59E0B]" /> Attendance (+10)
+                      <Check className="size-4 text-[#F59E0B]" /> Attendance (+100)
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-[#4A1A10] px-3 py-1 border border-[#D97706]/30">
-                      <Check className="size-4 text-[#F59E0B]" /> Feedback (+5)
+                      <Check className="size-4 text-[#F59E0B]" /> Feedback Submitted
                     </span>
                   </div>
                 </>
@@ -449,7 +449,7 @@ export default function AttendeeFlow({ sessionId = 'session-04' }: { sessionId?:
                 href="/leaderboard"
                 className="btn-rajasthan-primary mt-8 flex h-12 items-center justify-center rounded-xl text-base"
               >
-                View Conclave Leaderboard <ArrowRight className="ml-2 size-4" />
+                View Leaderboard <ArrowRight className="ml-2 size-4" />
               </a>
             </div>
           )}

@@ -80,8 +80,7 @@ export async function POST(request: Request) {
         .all<{ id: string }>();
       for (const { id } of allParticipants.results) {
         const attPts = attMap.get(id) ?? 0;
-        const fbPts = fbMap.get(id) ?? 0;
-        const total = attPts + fbPts;
+        const total = attPts;
         const sessionsAttended = (
           await db()
             .prepare(`SELECT COUNT(*) as c FROM attendance WHERE participant_id = ?`)

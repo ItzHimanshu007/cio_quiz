@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS sessions (
   attendance_open integer DEFAULT 0 NOT NULL,
   feedback_open integer DEFAULT 0 NOT NULL,
   quiz_open integer DEFAULT 0 NOT NULL,
-  attendance_points integer DEFAULT 10 NOT NULL,
-  feedback_points integer DEFAULT 5 NOT NULL,
-  quiz_points integer DEFAULT 10 NOT NULL
+  attendance_points integer DEFAULT 100 NOT NULL,
+  feedback_points integer DEFAULT 0 NOT NULL,
+  quiz_points integer DEFAULT 0 NOT NULL
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_sessions_number ON sessions (session_number);
 CREATE INDEX IF NOT EXISTS idx_sessions_status ON sessions (status);

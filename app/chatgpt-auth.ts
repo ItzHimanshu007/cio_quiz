@@ -32,10 +32,10 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
       const data = JSON.parse(decoded);
       if (data && data.expiresAt > Date.now()) {
         return {
-          userId: data.userId || 'admin-conclave',
-          displayName: data.displayName || 'Conclave Administrator',
+          userId: data.userId || 'admin',
+          displayName: data.displayName || 'Administrator',
           email: data.email || 'admin@bfsi2030.cio',
-          fullName: data.displayName || 'Conclave Administrator',
+          fullName: data.displayName || 'Administrator',
         };
       }
     }
@@ -46,10 +46,10 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const adminPinHeader = requestHeaders.get('x-admin-pin') || requestHeaders.get('authorization')?.replace(/^Bearer\s+/i, '');
   if (adminPinHeader && VALID_PASSCODES.includes(adminPinHeader.trim())) {
     return {
-      userId: 'admin-conclave',
-      displayName: 'Conclave Administrator',
+      userId: 'admin',
+      displayName: 'Administrator',
       email: 'admin@bfsi2030.cio',
-      fullName: 'Conclave Administrator',
+      fullName: 'Administrator',
     };
   }
 
